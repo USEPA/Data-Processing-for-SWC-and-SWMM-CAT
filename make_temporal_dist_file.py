@@ -1,6 +1,18 @@
 import os
 
 def read_tables():
+    """
+    Reads all temporal distributions in directory
+
+    Temporal distributions were created by running WinTR-20
+    and saving each separately as a text file in a directory
+    nrcs_tables. Headers produced by WinTR-20 were kept.
+
+    Returns a dict with the key as the distribution name
+    (which is also the filename corresponding to the distribution)
+    and the value a list of the 241 corresponding percentages
+    of rainfall as strings.
+    """
 
     table_dict = {}
     for item in os.listdir('nrcs_tables'):
@@ -20,6 +32,15 @@ def read_tables():
     return table_dict
 
 def write_file(table_dict):
+    """
+    Writes file in format SWC expects.
+
+    Header is the word Time followed by each distribution name.
+    Each line is a six-minute interval followed by each
+    temporal distribution's value at that time.
+    File is tab-separated.
+    """
+
     times = [x/10 for x in range(0, 241)]
     table_ids = list(table_dict.keys())
 
@@ -40,6 +61,7 @@ def write_file(table_dict):
         for each_line in lines:
             file.write('\t'.join(each_line))
             file.write('\n')
+
 
 if __name__ == '__main__':
     nrcs_tables = read_tables()
