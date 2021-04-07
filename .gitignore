@@ -1,0 +1,4 @@
+*.gdb
+*.ipynb_checkpoints
+tempTable.csv
+schema.ini
