@@ -1,16 +1,3 @@
 *.gdb
 *.ipynb_checkpoints
-tempTable.csv
-tempTable.txt
 schema.ini
-D4EMLite_PREC_Details.txt
-PREC2035Hot.txt
-PREC2035Med.txt
-PREC2035Wet.txt
-PREC2060Hot.txt
-PREC2060Med.txt
-PREC2060Wet.txt
-GEVdepth2035Stormy.txt
-GEVdepth2035LessStormy.txt
-GEVdepth2060Stormy.txt
-GEVdepth2060LessStormy.txt
