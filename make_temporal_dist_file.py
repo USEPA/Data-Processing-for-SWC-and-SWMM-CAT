@@ -25,7 +25,7 @@ def read_tables():
         flat_data = []
         for x in data:
             for a in x.split():
-                flat_data.append(a)
+                flat_data.append(str(round(float(a)*100, 3)))
 
         table_dict[table_id] = flat_data
 
