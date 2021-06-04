@@ -1,5 +1,6 @@
 *.gdb
 *.ipynb_checkpoints
+*.backups
 schema.ini
 files/NOAA*.zip
 files/NRCC*.zip
