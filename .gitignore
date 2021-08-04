@@ -6,3 +6,4 @@ files/NOAA*.zip
 files/NRCC*.zip
 ImportLog
 Index
+__pycache__/*
