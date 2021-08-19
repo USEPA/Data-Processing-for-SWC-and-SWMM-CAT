@@ -7,3 +7,4 @@ files/NRCC*.zip
 ImportLog
 Index
 __pycache__/*
+*.sde
