@@ -8,3 +8,7 @@ ImportLog
 Index
 __pycache__/*
 *.sde
+temperature/ncei
+temperature/prism
+temperature/nldas
+temperature/gldas
