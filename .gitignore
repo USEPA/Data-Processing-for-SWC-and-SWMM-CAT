@@ -1,4 +1,14 @@
 *.gdb
 *.ipynb_checkpoints
-tempTable.csv
+*.backups
 schema.ini
+files/NOAA*.zip
+files/NRCC*.zip
+ImportLog
+Index
+__pycache__/*
+*.sde
+temperature/ncei
+temperature/prism
+temperature/nldas
+temperature/gldas

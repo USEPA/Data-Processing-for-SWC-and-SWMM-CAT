@@ -1,0 +1,8 @@
+Step 10 QA Review
+2021-08-03T20:54:02.271406
+Grid Projections Loaded: 24743
+Historic Stations Loaded: 11165
+COOP Stations Loaded: 1851
+ISD Stations Loaded: 3293
+Temp Dist File Records Loaded: 241
+Tigerweb States Loaded: 56

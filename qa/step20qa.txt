@@ -1,0 +1,34 @@
+Step 20 QA Review
+2021-08-03T14:43:05.497465
+ireg_zonesLoaded: 4
+NOAA_14_east_rf_distLoaded: 93
+AL_county_split_rf_dist__WGSLoaded: 237
+AR_county_split_WGSLoaded: 88
+CA_6_dist_mapLoaded: 142
+CO_NOAA_14_rf_distLoaded: 113
+DE_counties_WGS72Loaded: 5
+county_FL_WGS_split_poly9Loaded: 3888
+FL_NOAA_14_ptsLoaded: 128
+GA_county_split_WGSLoaded: 5089
+county_IA_WGSLoaded: 99
+IN_counties_WGSLoaded: 92
+KY_counties_WGSLoaded: 121
+LA_Parish_split_polyLoaded: 8091
+MD_areas_WGS72Loaded: 86
+county_MN_WGSLoaded: 87
+county_NE_WGSLoaded: 93
+NJ_county_WGS72Loaded: 99
+NV_County_WGSLoaded: 17
+OH_counties_WGS72Loaded: 97
+PA_counties_WGS72Loaded: 68
+SC_NOAA_14_rf_distLoaded: 6
+TN_NOAA_14_rf_distLoaded: 13
+VA_counties_and_zonesLoaded: 159
+WV_rainfall_distributionLoaded: 7
+CT_counties_WGS72Loaded: 39
+MA_county_WGS72Loaded: 253
+ME_counties_WGS72Loaded: 85
+NH_towns_WGSLoaded: 259
+NY_counties_WGS72Loaded: 240
+RI_counties_WGS72Loaded: 22
+VT_counties_WGS72Loaded: 14
