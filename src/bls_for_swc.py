@@ -18,13 +18,25 @@ FUEL_UTILITIES_ITEM_CODE = 'SAH2'
 
 def make_id(bls_city_id, item_code):
     """
+    Creates a BLS series ID
 
+    Takes a four-digit city ID and a four-digit item code
+    Returns a BLS series ID
     """
     return PREFIX + SEASONAL_ADJUSTMENT_CODE + \
         PERIODICITY_CODE + bls_city_id + item_code
 
 
 def make_ids():
+    """
+    Creates all series IDs to be obtained from the BLS API
+
+    The cost module of the SWC uses two national-level indices
+    (for ready-mix concrete and tractor shovel loaders)
+    and two city-specific indices (for energy and fuel utilities)
+
+    Returns a list of series IDs
+    """
     items = [BLS_READY_MIX_CONC_ID, BLS_TRACTOR_SHOVEL_LOADERS_ID]
 
     city_codes = ['0000',  # National
