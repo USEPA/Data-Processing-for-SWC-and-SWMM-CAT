@@ -188,5 +188,6 @@ if __name__ == '__main__':
     with open('second_data.json', 'r') as file:
         second_data = json.load(file)
 
-    national_response = write_cache_file(first_data, second_data, series_ids, BLS_API_KEY)
+    national_response = write_cache_file(
+        first_data, second_data, series_ids, BLS_API_KEY)
     calculate_national_index(national_response)
