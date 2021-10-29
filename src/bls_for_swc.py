@@ -66,6 +66,11 @@ def make_ids():
 
 
 def get_data(series_ids_list, registration_key, year):
+    """
+    Gets data from BLS API
+
+    Returns JSON response from API
+    """
 
     base_url = 'https://api.bls.gov/publicAPI/v2/timeseries/data/'
     headers = {'Content-type': 'application/json'}
