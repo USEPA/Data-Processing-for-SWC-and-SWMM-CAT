@@ -65,14 +65,14 @@ def make_ids():
     return items
 
 
-def get_data(series_ids_list, registration_key):
+def get_data(series_ids_list, registration_key, year):
 
     base_url = 'https://api.bls.gov/publicAPI/v2/timeseries/data/'
     headers = {'Content-type': 'application/json'}
 
     data = json.dumps(
         {"seriesid": series_ids_list,
-         "startyear": "2020", "endyear": "2020",
+         "startyear": year, "endyear": year,
          "catalog": "false",
          "calculations": "false",
          "annualaverage": "true",
@@ -120,7 +120,7 @@ def get_match(data, i, ids):
     return [item for item in data if item['seriesID'] == ids[i]][0]
 
 
-def write_cache_file(data1, data2, ids, registration_key):
+def write_cache_file(data1, data2, ids, registration_key, year):
 
     all_series = data1['Results']['series'] + data2['Results']['series']
     ready_mix_conc_series = get_match(all_series, 0, ids)
@@ -131,7 +131,7 @@ def write_cache_file(data1, data2, ids, registration_key):
     for i in range(2, len(all_series) - 1, 2):
         local_list = [ids[i], ids[i+1], ids[0], ids[1]]
 
-        request_model = make_request_model(local_list, 2020, registration_key)
+        request_model = make_request_model(local_list, year, registration_key)
 
         the_series = [get_match(all_series, i, ids),
                       get_match(all_series, i+1, ids),
@@ -153,7 +153,7 @@ def write_cache_file(data1, data2, ids, registration_key):
     return for_national_index
 
 
-def calculate_national_index(national_series):
+def calculate_national_index(national_series, year):
 
     C0_INTERCEPT = -19.4
     C1_READY_MIX = 0.113
@@ -178,15 +178,16 @@ def calculate_national_index(national_series):
             C3_ENERGY * values[0] +
             C4_FUEL_UTILS * values[1])
 
-    print(f'National index value is: {round(test, 2)}')
+    print(f'National index value for year {year} is: {round(test, 2)}')
 
 
 if __name__ == '__main__':
+    YEAR_TO_GET = 2020
     series_ids = make_ids()
 
     # the system-allowed limit is 25 series, so go in two steps
-    first_data = get_data(series_ids[0:24], BLS_API_KEY)
-    second_data = get_data(series_ids[24:], BLS_API_KEY)
+    first_data = get_data(series_ids[0:24], BLS_API_KEY, YEAR_TO_GET)
+    second_data = get_data(series_ids[24:], BLS_API_KEY, YEAR_TO_GET)
 
     # for debugging
     # with open('first_data.json', 'w') as file:
@@ -201,5 +202,5 @@ if __name__ == '__main__':
         second_data = json.load(file)
 
     national_response = write_cache_file(
-        first_data, second_data, series_ids, BLS_API_KEY)
-    calculate_national_index(national_response)
+        first_data, second_data, series_ids, BLS_API_KEY, YEAR_TO_GET)
+    calculate_national_index(national_response, YEAR_TO_GET)
