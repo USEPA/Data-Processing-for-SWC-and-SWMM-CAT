@@ -156,12 +156,11 @@ def write_cache_file(data1, data2, ids, registration_key, year):
 
         request_model = make_request_model(local_list, year, registration_key)
 
-        the_series = [get_match(all_series, i, ids),
-                      get_match(all_series, i+1, ids),
-                      ready_mix_conc_series,
-                      tractor_shovel_loaders_series]
-
-        response_model = make_response_model(the_series)
+        response_model = make_response_model(
+            [get_match(all_series, i, ids),
+             get_match(all_series, i+1, ids),
+             ready_mix_conc_series,
+             tractor_shovel_loaders_series])
 
         to_file += request_model[0:-1] + ','
         to_file += response_model[1:]
