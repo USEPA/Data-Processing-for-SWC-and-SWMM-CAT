@@ -144,13 +144,22 @@ def get_match(data, i, ids):
 
 
 def write_cache_file(data1, data2, ids, registration_key, year):
+    """
+    Writes cache file
+
+    Returns national series, used to calculate national Index
+    """
 
     all_series = data1['Results']['series'] + data2['Results']['series']
+
+    # Handle all_series[0:1] separately
+    # These are the series used for all cities
     ready_mix_conc_series = get_match(all_series, 0, ids)
     tractor_shovel_loaders_series = get_match(all_series, 1, ids)
 
     to_file = ''
 
+    # Start at 2 because that's where city-specific series start
     for i in range(2, len(all_series) - 1, 2):
         local_list = [ids[i], ids[i+1], ids[0], ids[1]]
 
