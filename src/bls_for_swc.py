@@ -185,6 +185,13 @@ def write_cache_file(data1, data2, ids, registration_key, year):
 
 
 def calculate_national_index(national_series, year):
+    """
+    Calculates national index for a given year
+
+    The national index value DEFAULT_YYYY_NATIONAL_INDEX is used in
+    SWC in CostRegionalizationServiceImpl.java
+
+    """
 
     C0_INTERCEPT = -19.4
     C1_READY_MIX = 0.113
@@ -194,6 +201,7 @@ def calculate_national_index(national_series, year):
 
     series = json.loads(national_series)['responseModel']['Results']['series']
     ids = [x['seriesID'] for x in series]
+
     assert ids[0][-4:] == ENERGY_ITEM_CODE
     assert ids[1][-4:] == FUEL_UTILITIES_ITEM_CODE
     assert ids[0][4:8] and ids[1][4:8] == '0000'
@@ -203,13 +211,13 @@ def calculate_national_index(national_series, year):
 
     values = [float(x['data'][0]['value']) for x in series]
 
-    test = (C0_INTERCEPT +
-            C1_READY_MIX * values[2] +
-            C2_TRACTOR_SHOVEL * values[3] +
-            C3_ENERGY * values[0] +
-            C4_FUEL_UTILS * values[1])
+    national_index = (C0_INTERCEPT +
+                      C1_READY_MIX * values[2] +
+                      C2_TRACTOR_SHOVEL * values[3] +
+                      C3_ENERGY * values[0] +
+                      C4_FUEL_UTILS * values[1])
 
-    print(f'National index value for year {year} is: {round(test, 2)}')
+    print(f'National index for year {year} is: {round(national_index, 2)}')
 
 
 if __name__ == '__main__':
