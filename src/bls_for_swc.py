@@ -89,6 +89,14 @@ def get_data(series_ids_list, registration_key, year):
 
 
 def make_request_model(four_ids, year, registration_key):
+    """
+    Makes request model to put in cache file
+
+    Each request model has four IDs (two city-specific
+    and two national) and the year for the data
+
+    Returns request model
+    """
 
     request_model = {
         "requestModel": {
@@ -106,6 +114,13 @@ def make_request_model(four_ids, year, registration_key):
 
 
 def make_response_model(four_series):
+    """
+    Makes response model to put in cache file
+
+    Each response model has four series of data
+
+    Returns response model
+    """
 
     response_model = {
         "responseModel": {
@@ -122,6 +137,9 @@ def make_response_model(four_series):
 
 
 def get_match(data, i, ids):
+    """
+    Returns series results corresponding to integer i
+    """
     return [item for item in data if item['seriesID'] == ids[i]][0]
 
 
