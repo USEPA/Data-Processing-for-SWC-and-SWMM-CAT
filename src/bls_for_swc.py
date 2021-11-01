@@ -234,11 +234,11 @@ if __name__ == '__main__':
     # with open('second_data.json', 'w') as file:
     #     file.write(json.dumps(second_data))
 
-    with open('first_data.json', 'r') as file:
-        first_data = json.load(file)
+    # with open('first_data.json', 'r') as file:
+    #     first_data = json.load(file)
 
-    with open('second_data.json', 'r') as file:
-        second_data = json.load(file)
+    # with open('second_data.json', 'r') as file:
+    #     second_data = json.load(file)
 
     national_response = write_cache_file(
         first_data, second_data, series_ids, BLS_API_KEY, YEAR_TO_GET)
