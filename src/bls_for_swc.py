@@ -1,5 +1,6 @@
 import argparse
 import json
+import os
 
 import requests
 
@@ -224,26 +225,31 @@ def calculate_national_index(national_series, year):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("year", help="Year")
+    parser.add_argument("-d", "--debug", default=False)
 
     args = parser.parse_args()
 
     series_ids = make_ids()
 
-    # the system-allowed limit is 25 series, so go in two steps
-    first_data = get_data(series_ids[0:24], BLS_API_KEY, args.year)
-    second_data = get_data(series_ids[24:], BLS_API_KEY, args.year)
+    if args.debug:
+        if not os.path.exists('first_data.json') and not os.path.exists('second_data.json'):
+            first_data = get_data(series_ids[0:24], BLS_API_KEY, args.year)
+            second_data = get_data(series_ids[24:], BLS_API_KEY, args.year)
 
-    # for debugging
-    # with open('first_data.json', 'w') as file:
-    #     file.write(json.dumps(first_data))
-    # with open('second_data.json', 'w') as file:
-    #     file.write(json.dumps(second_data))
+            with open('first_data.json', 'w') as file:
+                file.write(json.dumps(first_data))
+            with open('second_data.json', 'w') as file:
+                file.write(json.dumps(second_data))
 
-    # with open('first_data.json', 'r') as file:
-    #     first_data = json.load(file)
-
-    # with open('second_data.json', 'r') as file:
-    #     second_data = json.load(file)
+        else:
+            with open('first_data.json', 'r') as file:
+                first_data = json.load(file)
+            with open('second_data.json', 'r') as file:
+                second_data = json.load(file)
+    else:
+        # the system-allowed limit is 25 series, so go in two steps
+        first_data = get_data(series_ids[0:24], BLS_API_KEY, args.year)
+        second_data = get_data(series_ids[24:], BLS_API_KEY, args.year)
 
     national_response = write_cache_file(
         first_data, second_data, series_ids, BLS_API_KEY, args.year)
