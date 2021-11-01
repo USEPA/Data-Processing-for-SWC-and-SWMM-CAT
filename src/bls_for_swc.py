@@ -1,3 +1,4 @@
+import argparse
 import json
 
 import requests
@@ -221,12 +222,16 @@ def calculate_national_index(national_series, year):
 
 
 if __name__ == '__main__':
-    YEAR_TO_GET = 2020
+    parser = argparse.ArgumentParser()
+    parser.add_argument("year", help="Year")
+
+    args = parser.parse_args()
+
     series_ids = make_ids()
 
     # the system-allowed limit is 25 series, so go in two steps
-    first_data = get_data(series_ids[0:24], BLS_API_KEY, YEAR_TO_GET)
-    second_data = get_data(series_ids[24:], BLS_API_KEY, YEAR_TO_GET)
+    first_data = get_data(series_ids[0:24], BLS_API_KEY, args.year)
+    second_data = get_data(series_ids[24:], BLS_API_KEY, args.year)
 
     # for debugging
     # with open('first_data.json', 'w') as file:
@@ -241,5 +246,5 @@ if __name__ == '__main__':
     #     second_data = json.load(file)
 
     national_response = write_cache_file(
-        first_data, second_data, series_ids, BLS_API_KEY, YEAR_TO_GET)
-    calculate_national_index(national_response, YEAR_TO_GET)
+        first_data, second_data, series_ids, BLS_API_KEY, args.year)
+    calculate_national_index(national_response, args.year)
