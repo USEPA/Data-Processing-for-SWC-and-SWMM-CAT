@@ -10,8 +10,8 @@ BLS_API_KEY = "your_BLS_key"
 ```
 
 5. Create conda environment `conda env create --file bls.yml` and activate `conda activate bls`
-6. Change year (#TODO make command line argument)
-7. Run `python src/bls_for_swc.py` and note national index value
-8. Copy costRegionalizationCache.txt to swcalculator_home/costData
-9. Change national index in CostRegionalizationServiceImpl.java
-10. Change year in legends Front End
+6. Run `python src/bls_for_swc.py YEAR` and note national index value
+   - If you run into problems and need to debug, you can use the debug flag to avoid downloading the data multiple times: `python src/bls_for_swc.py 2020 --debug True` 
+7. Copy costRegionalizationCache.txt to swcalculator_home/costData
+8. Change national index in CostRegionalizationServiceImpl.java
+9. Change year in legends (in Front End)
