@@ -13,5 +13,5 @@ BLS_API_KEY = "your_BLS_key"
 6. Run `python src/bls_for_swc.py YEAR` and note national index value
    - If you run into problems and need to debug, you can use the debug flag to avoid downloading the data multiple times: `python src/bls_for_swc.py 2020 --debug True` 
 7. Copy costRegionalizationCache.txt to swcalculator_home/costData
-8. Change national index in CostRegionalizationServiceImpl.java
-9. Change year in legends (in Front End)
+8. Change `COST_DATA_YEAR` and `DEFAULT_YYYY_NATIONAL_INDEX` in CostRegionalizationServiceImpl.java
+9. Change `costDataYear` in app.js (Front End)
