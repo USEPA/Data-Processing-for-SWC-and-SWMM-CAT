@@ -106,27 +106,34 @@ def plot_noaa_precip(x, y):
     plt.show()
 
 
+def plot_noaa_data():
+    noaa_filename = os.path.join('for_plotting', 'sa_convective_24h_temporal.csv')
+
+    test_1, test_2 = read_noaa_data(noaa_filename)
+    plot_noaa_precip(test_1, test_2[0:9])
+    plot_noaa_precip(test_1, test_2[9:18])
+    plot_noaa_precip(test_1, test_2[18:27])
+    plot_noaa_precip(test_1, test_2[27:36])
+    plot_noaa_precip(test_1, test_2[36:45])
+
+
 if __name__ == '__main__':
-    distributions = ['CA_1', 'CA_2', 'CA_3', 'CA_4', 'CA_5', 'CA_6']
-    distributions = ['MSE_1', 'MSE_2', 'MSE_3', 'MSE_4', 'MSE_5', 'MSE_6']
-    distributions = ['NOAA_A', 'NOAA_B', 'NOAA_C', 'NOAA_D']
-    distributions = ['NRCC_A', 'NRCC_B', 'NRCC_C', 'NRCC_D']
-    distributions = ['NV_N', 'NV_S', 'NV_W']
-    distributions = ['SCS_I', 'SCS_IA', 'SCS_II', 'SCS_III']
-    distribution_data = []
-    for distribution in distributions:
-        distribution_data.append(read_nrcs_data(os.path.join('nrcs_tables', distribution + '.txt')))
-    plot_precip(distribution_data, distributions)
+    distributions = []
+    distributions.append(['CA_1', 'CA_2', 'CA_3', 'CA_4', 'CA_5', 'CA_6'])
+    distributions.append(['MSE_1', 'MSE_2', 'MSE_3', 'MSE_4', 'MSE_5', 'MSE_6'])
+
+    # distributions = ['NOAA_A', 'NOAA_B', 'NOAA_C', 'NOAA_D']
+    # distributions = ['NRCC_A', 'NRCC_B', 'NRCC_C', 'NRCC_D']
+    # distributions = ['NV_N', 'NV_S', 'NV_W']
+    # distributions = ['SCS_I', 'SCS_IA', 'SCS_II', 'SCS_III']
+
+    distribution_data = {}
+    for distribution_list in distributions:
+        for x in distribution_list:
+            distribution_data[x] = read_nrcs_data(os.path.join(
+                'nrcs_tables', x + '.txt'))
 
 
-    # noaa_filename = os.path.join('for_plotting', 'sa_convective_24h_temporal.csv')
+    # plot_precip(distribution_data, distributions)
 
-    # print(os.listdir('for_plotting'))
-
-    # test_1, test_2 = read_noaa_data(noaa_filename)
-    # plot_noaa_precip(test_1, test_2[0:9])
-    # plot_noaa_precip(test_1, test_2[9:18])
-    # plot_noaa_precip(test_1, test_2[18:27])
-    # plot_noaa_precip(test_1, test_2[27:36])
-    # plot_noaa_precip(test_1, test_2[36:45])
 
