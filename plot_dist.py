@@ -79,13 +79,14 @@ def plot_precip(precips, names):
         ax.set_xticks(x_minor_ticks, minor=True)
         ax.set_yticks(y_major_ticks)
         ax.set_yticks(y_minor_ticks, minor=True)
+        ax.tick_params(axis='both', which='major', labelsize='large')
 
         ax.grid(which='minor', alpha=0.2)
         ax.grid(which='major', alpha=0.5)
 
-        ax.legend()
-        ax.set_xlabel('Time (hours)')
-        ax.set_ylabel('Fraction of 24-hour rainfall')
+        ax.legend(fontsize='large')
+        ax.set_xlabel('Time (hours)', fontsize='large')
+        ax.set_ylabel('Fraction of 24-hour rainfall', fontsize='large')
 
     plt.show()
 

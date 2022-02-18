@@ -75,7 +75,8 @@ def plot_states(distribution):
     LegendElement.insert(-2, patch)
     patch = mpatches.Patch(facecolor=facecolor, label='SCS_II')
     LegendElement.insert(-1, patch)
-    ax.legend(handles = LegendElement, loc='upper right')
+    ax.legend(handles=LegendElement, title='Rainfall Distribution Type',
+                        fontsize='large', fancybox=True, loc='upper right')
     plt.show()
 
 if __name__ == '__main__':
