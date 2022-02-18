@@ -1,4 +1,6 @@
 import os
+import itertools
+
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -41,40 +43,49 @@ def read_noaa_data(dist_file):
         for i in x:
             values = i.strip('\n').split(',')[1:]
             stuff.append([float(value) for value in values])
-            # print(stuff)
-            # break
 
     return percent_of_duration_values, stuff
 
 def plot_precip(precips, names):
     times = [x/10 for x in range(0, 241)]
+    palette = itertools.cycle(sns.color_palette("Paired"))
+
+    graph_spots = list(range(1, 7))
 
     fig = plt.figure()
-    ax = fig.add_subplot(1, 1, 1)
+    for (name, graph_spot) in zip(names, graph_spots):
 
-    palette = sns.color_palette()
+        ax = fig.add_subplot(2, 3, graph_spot)
 
-    for (precip, name) in zip(precips, names):
-        ax.plot(times, precip, '-', label=name)
+        for x in name:
+            if x == 'SCS_I':
+                color = 'dimgray'
+            elif x == 'SCS_II':
+                color = [0.9375, 0.9375, 0.859375]
+            else:
+                color = next(palette)
+            ax.plot(times, precips[x], '-', label=x, color=color)
 
-    ax.set_xlim(0, 24)
-    ax.set_ylim(0, 1)
+        ax.set_xlim(0, 24)
+        ax.set_ylim(0, 1)
 
-    x_major_ticks = np.arange(0, 25, 4)
-    x_minor_ticks = np.arange(0, 25, 2)
+        x_major_ticks = np.arange(0, 25, 4)
+        x_minor_ticks = np.arange(0, 25, 2)
 
-    y_major_ticks = np.arange(0, 1.1, 0.2)
-    y_minor_ticks = np.arange(0, 1.1, 0.1)
+        y_major_ticks = np.arange(0, 1.1, 0.5)
+        y_minor_ticks = np.arange(0, 1.1, 0.1)
 
-    ax.set_xticks(x_major_ticks)
-    ax.set_xticks(x_minor_ticks, minor=True)
-    ax.set_yticks(y_major_ticks)
-    ax.set_yticks(y_minor_ticks, minor=True)
+        ax.set_xticks(x_major_ticks)
+        ax.set_xticks(x_minor_ticks, minor=True)
+        ax.set_yticks(y_major_ticks)
+        ax.set_yticks(y_minor_ticks, minor=True)
 
-    ax.grid(which='minor', alpha=0.2)
-    ax.grid(which='major', alpha=0.5)
+        ax.grid(which='minor', alpha=0.2)
+        ax.grid(which='major', alpha=0.5)
 
-    ax.legend()
+        ax.legend()
+        ax.set_xlabel('Time (hours)')
+        ax.set_ylabel('Fraction of 24-hour rainfall')
 
     plt.show()
 
@@ -119,13 +130,12 @@ def plot_noaa_data():
 
 if __name__ == '__main__':
     distributions = []
-    distributions.append(['CA_1', 'CA_2', 'CA_3', 'CA_4', 'CA_5', 'CA_6'])
     distributions.append(['MSE_1', 'MSE_2', 'MSE_3', 'MSE_4', 'MSE_5', 'MSE_6'])
-
-    # distributions = ['NOAA_A', 'NOAA_B', 'NOAA_C', 'NOAA_D']
-    # distributions = ['NRCC_A', 'NRCC_B', 'NRCC_C', 'NRCC_D']
-    # distributions = ['NV_N', 'NV_S', 'NV_W']
-    # distributions = ['SCS_I', 'SCS_IA', 'SCS_II', 'SCS_III']
+    distributions.append(['NOAA_A', 'NOAA_B', 'NOAA_C', 'NOAA_D'])
+    distributions.append(['NRCC_A', 'NRCC_B', 'NRCC_C', 'NRCC_D'])
+    distributions.append(['NV_N', 'NV_S', 'NV_W'])
+    distributions.append(['CA_1', 'CA_2', 'CA_3', 'CA_4', 'CA_5', 'CA_6'])
+    distributions.append(['SCS_I', 'SCS_IA', 'SCS_II', 'SCS_III'])
 
     distribution_data = {}
     for distribution_list in distributions:
@@ -133,7 +143,6 @@ if __name__ == '__main__':
             distribution_data[x] = read_nrcs_data(os.path.join(
                 'nrcs_tables', x + '.txt'))
 
-
-    # plot_precip(distribution_data, distributions)
+    plot_precip(distribution_data, distributions)
 
 
