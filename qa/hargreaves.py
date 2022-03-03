@@ -112,7 +112,18 @@ def plot_evap(evap):
 if __name__ == '__main__':
     latitudes = get_latitudes()
 
-    station_ids = ['72793524234'] # seattle
+    station_ids = [
+        '70273526409', # anchorage
+        'USC00519534', # honolulu
+        '72793524234', # seattle
+        '72466693067', # denver
+        '72658014922', # minneapolis
+        '72530094846', # chicago
+        '72202012839', # miami
+        '72503394728', # new york
+        '72278403184', # phoenix
+        '72219503888', # atlanta
+        ]
 
     for station_id in station_ids:
         temperature_data = read_temperature_file(station_id)
