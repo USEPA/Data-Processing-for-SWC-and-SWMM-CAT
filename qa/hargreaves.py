@@ -1,3 +1,4 @@
+import calendar
 import datetime
 import os
 import math
@@ -44,42 +45,42 @@ def calculate_evaporation(temperature_data, latitude):
     evaporations = []
 
     for item in temperature_data:
-        try:
-            J = datetime.date(1,int(item[2]),int(item[3])).toordinal() # julian day
-            d_r = 1 + 0.033*math.cos(2*math.pi*J/365)
-            delta = 0.4093*math.sin(2*math.pi*(284+J)/365)
-            w_s = math.acos(-math.tan(latitude_radians)*math.tan(delta))
-            R_a = 37.6*d_r*(w_s*math.sin(latitude_radians)*math.sin(delta) +
-                            math.cos(latitude_radians)*math.cos(delta)*math.sin(w_s))
+        J_with_year = datetime.date(int(item[1]),int(item[2]),int(item[3])).toordinal()
+        J = J_with_year - datetime.datetime(int(item[1]), 1, 1).toordinal() + 1 # julian day
 
-            T_min_C = convert_temperature(item[-1])
-            T_max_C = convert_temperature(item[-2])
-            local_T_a = (T_min_C + T_max_C)/2.0
-            local_T_r = T_max_C - T_min_C
+        if calendar.isleap(int(item[1])):
+            days_per_year = 366
+        else:
+            days_per_year = 365
 
-            T_a.append(local_T_a)
-            T_r.append(local_T_r)
+        d_r = 1 + 0.033*math.cos(2*math.pi*J/days_per_year)
+        delta = 0.4093*math.sin(2*math.pi*(284+J)/days_per_year)
+        w_s = math.acos(-math.tan(latitude_radians)*math.tan(delta))
+        R_a = 37.6*d_r*(w_s*math.sin(latitude_radians)*math.sin(delta) +
+                        math.cos(latitude_radians)*math.cos(delta)*math.sin(w_s))
 
-            # running average
-            if counter < 7:
-                running_average_T_a = statistics.mean(T_a)
-                running_average_T_r = statistics.mean(T_r)
-            else:
-                running_average_T_a = statistics.mean(T_a[-7:])
-                running_average_T_r = statistics.mean(T_r[-7:])
+        T_min_C = convert_temperature(item[-1])
+        T_max_C = convert_temperature(item[-2])
+        local_T_a = (T_min_C + T_max_C)/2.0
+        local_T_r = T_max_C - T_min_C
 
-            latent_heat = 2.5 - 0.002361*running_average_T_a # lambda, but lambda is a keyword
+        T_a.append(local_T_a)
+        T_r.append(local_T_r)
 
-            evap = 0.0023*(R_a/latent_heat)*math.sqrt(running_average_T_r)*(running_average_T_a+17.8)
-            evaporations.append(evap/25.4)
+        # running average
+        if counter < 7:
+            running_average_T_a = statistics.mean(T_a)
+            running_average_T_r = statistics.mean(T_r)
+        else:
+            running_average_T_a = statistics.mean(T_a[-7:])
+            running_average_T_r = statistics.mean(T_r[-7:])
 
-            counter += 1
+        latent_heat = 2.5 - 0.002361*running_average_T_a # lambda, but lambda is a keyword
 
-        except ValueError:
-            # leap year...let's just ignore this for now?
-            # supposed to use 366 in denominator of d_r if a leap year
-            pass
+        evap = 0.0023*(R_a/latent_heat)*math.sqrt(running_average_T_r)*(running_average_T_a+17.8)
+        evaporations.append(evap/25.4)
 
+        counter += 1
 
     return evaporations
 
