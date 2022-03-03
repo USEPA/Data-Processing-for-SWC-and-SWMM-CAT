@@ -36,6 +36,10 @@ def convert_temperature(temperature_f):
     return temperature_c
 
 
+def adjust_temperatures(base_temperature_data, adjustments):
+    pass
+
+
 def calculate_evaporation(temperature_data, latitude):
     latitude_radians = latitude * math.pi/180
 
@@ -108,21 +112,19 @@ def plot_evap(evap):
 if __name__ == '__main__':
     latitudes = get_latitudes()
 
-    station_id = '72793524234'  # seattle
-    seattle_temperature_data = read_temperature_file(station_id)
+    station_ids = ['72793524234'] # seattle
 
-    latitude_for_verification = -20
+    for station_id in station_ids:
+        temperature_data = read_temperature_file(station_id)
+        evaporations, months = calculate_evaporation(temperature_data, float(latitudes[station_id]))
 
-    seattle_evaporations, seattle_months = calculate_evaporation(seattle_temperature_data, float(latitudes[station_id]))
-    # plot_evap(seattle_evaporations)
+        monthly_evaporation = aggregate_evaporations(evaporations, months)
 
-    seattle_monthly_evaporation = aggregate_evaporations(seattle_evaporations, seattle_months)
-
-
-    # just for printing
-    rounded_evap = {}
-    for key in seattle_monthly_evaporation.keys():
-        rounded_evap[key] = round(seattle_monthly_evaporation[key], 3)
-    print(rounded_evap)
+        # for debugging
+        plot_evap(evaporations)
+        rounded_evap = {}
+        for key in monthly_evaporation.keys():
+            rounded_evap[key] = round(monthly_evaporation[key], 3)
+        print(rounded_evap)
 
 
