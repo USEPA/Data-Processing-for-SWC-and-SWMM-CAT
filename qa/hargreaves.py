@@ -43,9 +43,11 @@ def calculate_evaporation(temperature_data, latitude):
     T_a = []
     T_r = []
     evaporations = []
+    months = []
 
     for item in temperature_data:
-        J_with_year = datetime.date(int(item[1]),int(item[2]),int(item[3])).toordinal()
+        month = int(item[2])
+        J_with_year = datetime.date(int(item[1]),month,int(item[3])).toordinal()
         J = J_with_year - datetime.datetime(int(item[1]), 1, 1).toordinal() + 1 # julian day
 
         if calendar.isleap(int(item[1])):
@@ -79,10 +81,25 @@ def calculate_evaporation(temperature_data, latitude):
 
         evap = 0.0023*(R_a/latent_heat)*math.sqrt(running_average_T_r)*(running_average_T_a+17.8)
         evaporations.append(evap/25.4)
+        months.append(month)
 
         counter += 1
 
-    return evaporations
+    return (evaporations, months)
+
+def aggregate_evaporations(evaporations, months):
+    evap_dict = {k: [] for k in range(1, 13)}
+
+    for evap, month in zip(evaporations, months):
+        evap_dict[month].append(evap)
+
+
+    monthly_dict = {k: 0 for k in range(1, 13)}
+    for key, value in evap_dict.items():
+        monthly_dict[key] = statistics.mean(value)
+
+    return monthly_dict
+
 
 def plot_evap(evap):
     plt.plot(evap)
@@ -91,11 +108,16 @@ def plot_evap(evap):
 if __name__ == '__main__':
     latitudes = get_latitudes()
 
-
     station_id = '72793524234'  # seattle
     seattle_temperature_data = read_temperature_file(station_id)
 
     latitude_for_verification = -20
 
-    seattle_evaporations = calculate_evaporation(seattle_temperature_data, float(latitudes[station_id]))
-    plot_evap(seattle_evaporations)
+    seattle_evaporations, seattle_months = calculate_evaporation(seattle_temperature_data, float(latitudes[station_id]))
+    # plot_evap(seattle_evaporations)
+
+    seattle_monthly_evaporation = aggregate_evaporations(seattle_evaporations, seattle_months)
+    for i in range(1, 13):
+        print(f'{seattle_monthly_evaporation[i]:.3f}')
+
+
