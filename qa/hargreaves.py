@@ -1,6 +1,7 @@
 import datetime
 import os
 import math
+import statistics
 
 import matplotlib.pyplot as plt
 
@@ -28,6 +29,7 @@ def read_temperature_file(station_id):
     split_data = [item.strip('\n').split('\t') for item in data]
     return split_data
 
+
 def convert_temperature(temperature_f):
     temperature_c = (float(temperature_f) - 32.0) *5/9
     return temperature_c
@@ -35,7 +37,6 @@ def convert_temperature(temperature_f):
 
 def calculate_evaporation(temperature_data, latitude):
     latitude_radians = latitude * math.pi/180
-    print(latitude_radians)
 
     counter = 0
     T_a = []
@@ -59,11 +60,20 @@ def calculate_evaporation(temperature_data, latitude):
             T_a.append(local_T_a)
             T_r.append(local_T_r)
 
-            # let's first just use the local values, we can figure the running average out later
-            latent_heat = 2.5 - 0.002361*local_T_a # lambda, but lambda is a keyword
+            # running average
+            if counter < 7:
+                running_average_T_a = statistics.mean(T_a)
+                running_average_T_r = statistics.mean(T_r)
+            else:
+                running_average_T_a = statistics.mean(T_a[-7:])
+                running_average_T_r = statistics.mean(T_r[-7:])
 
-            evap = 0.0023*(R_a/latent_heat)*math.sqrt(local_T_r)*(local_T_a+17.8)
+            latent_heat = 2.5 - 0.002361*running_average_T_a # lambda, but lambda is a keyword
+
+            evap = 0.0023*(R_a/latent_heat)*math.sqrt(running_average_T_r)*(running_average_T_a+17.8)
             evaporations.append(evap/25.4)
+
+            counter += 1
 
         except ValueError:
             # leap year...let's just ignore this for now?
