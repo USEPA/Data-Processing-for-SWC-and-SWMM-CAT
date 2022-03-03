@@ -117,7 +117,12 @@ if __name__ == '__main__':
     # plot_evap(seattle_evaporations)
 
     seattle_monthly_evaporation = aggregate_evaporations(seattle_evaporations, seattle_months)
-    for i in range(1, 13):
-        print(f'{seattle_monthly_evaporation[i]:.3f}')
+
+
+    # just for printing
+    rounded_evap = {}
+    for key in seattle_monthly_evaporation.keys():
+        rounded_evap[key] = round(seattle_monthly_evaporation[key], 3)
+    print(rounded_evap)
 
 
