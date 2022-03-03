@@ -28,6 +28,10 @@ def read_temperature_file(station_id):
     split_data = [item.strip('\n').split('\t') for item in data]
     return split_data
 
+def convert_temperature(temperature_f):
+    temperature_c = (float(temperature_f) - 32.0) *5/9
+    return temperature_c
+
 
 def calculate_evaporation(temperature_data, latitude):
     latitude_radians = latitude * math.pi/180
@@ -38,8 +42,6 @@ def calculate_evaporation(temperature_data, latitude):
     T_r = []
     evaporations = []
 
-
-
     for item in temperature_data:
         try:
             J = datetime.date(1,int(item[2]),int(item[3])).toordinal() # julian day
@@ -49,8 +51,8 @@ def calculate_evaporation(temperature_data, latitude):
             R_a = 37.6*d_r*(w_s*math.sin(latitude_radians)*math.sin(delta) +
                             math.cos(latitude_radians)*math.cos(delta)*math.sin(w_s))
 
-            T_min_C = (float(item[-1]) - 32)*5/9
-            T_max_C = (float(item[-2]) - 32)*5/9
+            T_min_C = convert_temperature(item[-1])
+            T_max_C = convert_temperature(item[-2])
             local_T_a = (T_min_C + T_max_C)/2.0
             local_T_r = T_max_C - T_min_C
 
