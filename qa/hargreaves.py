@@ -22,6 +22,22 @@ def get_latitudes():
     return lat_dict
 
 
+def read_adjustments(scenario):
+    filename = os.path.join(os.getcwd(), 'resources', scenario + '.txt')
+    with open(filename, 'r') as file:
+        data = file.readlines()
+
+    split_data = [item.strip('\n').split('\t') for item in data]
+    header = split_data.pop(0)
+
+    adjustment_dict = {}
+    for x in split_data:
+        monthly_adjustments = x[1:-1]
+        adjustment_dict[x[0]] = {k: float(v) for k, v in zip(range(1, 13), monthly_adjustments)}
+
+    return adjustment_dict
+
+
 def read_temperature_file(station_id):
     filename = os.path.join(os.getcwd(), 'resources', 'temperature', station_id + '.txt')
     with open(filename, 'r') as file:
@@ -32,7 +48,7 @@ def read_temperature_file(station_id):
 
 
 def convert_temperature(temperature_f):
-    temperature_c = (float(temperature_f) - 32.0) *5/9
+    temperature_c = (temperature_f - 32.0) *5/9
     return temperature_c
 
 
@@ -40,8 +56,10 @@ def adjust_temperatures(base_temperature_data, adjustments):
     pass
 
 
-def calculate_evaporation(temperature_data, latitude):
+def calculate_evaporation(temperature_data, latitude, adjustments):
     latitude_radians = latitude * math.pi/180
+    print(adjustments)
+
 
     counter = 0
     T_a = []
@@ -65,8 +83,8 @@ def calculate_evaporation(temperature_data, latitude):
         R_a = 37.6*d_r*(w_s*math.sin(latitude_radians)*math.sin(delta) +
                         math.cos(latitude_radians)*math.cos(delta)*math.sin(w_s))
 
-        T_min_C = convert_temperature(item[-1])
-        T_max_C = convert_temperature(item[-2])
+        T_min_C = convert_temperature(float(item[-1]) + adjustments[month])
+        T_max_C = convert_temperature(float(item[-2]) + adjustments[month])
         local_T_a = (T_min_C + T_max_C)/2.0
         local_T_r = T_max_C - T_min_C
 
@@ -97,7 +115,6 @@ def aggregate_evaporations(evaporations, months):
     for evap, month in zip(evaporations, months):
         evap_dict[month].append(evap)
 
-
     monthly_dict = {k: 0 for k in range(1, 13)}
     for key, value in evap_dict.items():
         monthly_dict[key] = statistics.mean(value)
@@ -105,37 +122,62 @@ def aggregate_evaporations(evaporations, months):
     return monthly_dict
 
 
-def plot_evap(evap):
-    plt.plot(evap)
+def plot_evap(evaps):
+    for evap in evaps:
+        plt.plot(evap)
     plt.show()
 
 if __name__ == '__main__':
     latitudes = get_latitudes()
+    scenarios = ['TEMP2035HotDry']
+    temp_2035_hotdry = read_adjustments(scenarios[0])
 
     station_ids = [
-        '70273526409', # anchorage
-        'USC00519534', # honolulu
+        # '70273526409', # anchorage
+        # 'USC00519534', # honolulu
         '72793524234', # seattle
-        '72466693067', # denver
-        '72658014922', # minneapolis
-        '72530094846', # chicago
-        '72202012839', # miami
-        '72503394728', # new york
-        '72278403184', # phoenix
-        '72219503888', # atlanta
+        # '72466693067', # denver
+        # '72658014922', # minneapolis
+        # '72530094846', # chicago
+        # '72202012839', # miami
+        # '72503394728', # new york
+        # '72278403184', # phoenix
+        # '72219503888', # atlanta
         ]
 
-    for station_id in station_ids:
-        temperature_data = read_temperature_file(station_id)
-        evaporations, months = calculate_evaporation(temperature_data, float(latitudes[station_id]))
+    no_adjustments = {k: 0 for k in range(1, 13)}
 
-        monthly_evaporation = aggregate_evaporations(evaporations, months)
+    for station_id in station_ids:
+        monthly_evaporation = {}
+        temperature_data = read_temperature_file(station_id)
+        evaporations, months = calculate_evaporation(
+            temperature_data, float(latitudes[station_id]), no_adjustments)
+
+        monthly_evaporation['base'] = aggregate_evaporations(evaporations, months)
+
+        for scenario in scenarios:
+            a_evaporations, a_months = calculate_evaporation(
+                temperature_data, float(latitudes[station_id]), temp_2035_hotdry[station_id])
+
+            monthly_evaporation[scenario] = aggregate_evaporations(a_evaporations, months)
+
+
 
         # for debugging
-        plot_evap(evaporations)
+        plot_evap([evaporations, a_evaporations])
+
         rounded_evap = {}
-        for key in monthly_evaporation.keys():
-            rounded_evap[key] = round(monthly_evaporation[key], 3)
+        for key in monthly_evaporation['base'].keys():
+            rounded_evap[key] = round(monthly_evaporation['base'][key], 3)
         print(rounded_evap)
+
+        for key in monthly_evaporation['TEMP2035HotDry'].keys():
+            rounded_evap[key] = round(monthly_evaporation['TEMP2035HotDry'][key], 3)
+
+        print(rounded_evap)
+
+        # for key in a_monthly_evaporation.keys():
+        #     rounded_evap[key] = round(a_monthly_evaporation[key], 3)
+
 
 
