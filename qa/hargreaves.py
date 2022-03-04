@@ -129,8 +129,10 @@ def plot_evap(evaps):
 
 if __name__ == '__main__':
     latitudes = get_latitudes()
-    scenarios = ['TEMP2035HotDry']
-    temp_2035_hotdry = read_adjustments(scenarios[0])
+    scenarios = ['TEMP2035HotDry', 'TEMP2060HotDry']
+    adjustment_data = {}
+    for scenario in scenarios:
+        adjustment_data[scenario] = read_adjustments(scenario)
 
     station_ids = [
         # '70273526409', # anchorage
@@ -146,35 +148,39 @@ if __name__ == '__main__':
         ]
 
     no_adjustments = {k: 0 for k in range(1, 13)}
+    # evaporations = {}
+    monthly_evaporation = {}
 
     for station_id in station_ids:
-        monthly_evaporation = {}
+        monthly_evaporation[station_id] = {}
         temperature_data = read_temperature_file(station_id)
+
         evaporations, months = calculate_evaporation(
             temperature_data, float(latitudes[station_id]), no_adjustments)
 
-        monthly_evaporation['base'] = aggregate_evaporations(evaporations, months)
+        monthly_evaporation[station_id]['base'] = aggregate_evaporations(evaporations, months)
 
         for scenario in scenarios:
             a_evaporations, a_months = calculate_evaporation(
-                temperature_data, float(latitudes[station_id]), temp_2035_hotdry[station_id])
+                temperature_data, float(latitudes[station_id]), adjustment_data[scenario][station_id])
 
-            monthly_evaporation[scenario] = aggregate_evaporations(a_evaporations, months)
-
-
+            monthly_evaporation[station_id][scenario] = aggregate_evaporations(a_evaporations, months)
 
         # for debugging
         plot_evap([evaporations, a_evaporations])
 
-        rounded_evap = {}
-        for key in monthly_evaporation['base'].keys():
-            rounded_evap[key] = round(monthly_evaporation['base'][key], 3)
-        print(rounded_evap)
 
-        for key in monthly_evaporation['TEMP2035HotDry'].keys():
-            rounded_evap[key] = round(monthly_evaporation['TEMP2035HotDry'][key], 3)
+    print(monthly_evaporation)
 
-        print(rounded_evap)
+        # rounded_evap = {}
+        # for key in monthly_evaporation['base'].keys():
+        #     rounded_evap[key] = round(monthly_evaporation['base'][key], 3)
+        # print(rounded_evap)
+
+        # for key in monthly_evaporation['TEMP2035HotDry'].keys():
+        #     rounded_evap[key] = round(monthly_evaporation['TEMP2035HotDry'][key], 3)
+
+        # print(rounded_evap)
 
         # for key in a_monthly_evaporation.keys():
         #     rounded_evap[key] = round(a_monthly_evaporation[key], 3)
