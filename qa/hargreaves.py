@@ -58,8 +58,6 @@ def adjust_temperatures(base_temperature_data, adjustments):
 
 def calculate_evaporation(temperature_data, latitude, adjustments):
     latitude_radians = latitude * math.pi/180
-    print(adjustments)
-
 
     counter = 0
     T_a = []
@@ -129,48 +127,85 @@ def plot_evap(evaps):
 
 if __name__ == '__main__':
     latitudes = get_latitudes()
-    scenarios = ['TEMP2035HotDry', 'TEMP2060HotDry']
+    scenarios = ['TEMP2035HotDry', 'TEMP2035Central', 'TEMP2035WetWarm',
+                 'TEMP2060HotDry', 'TEMP2060Central', 'TEMP2060WetWarm']
     adjustment_data = {}
     for scenario in scenarios:
         adjustment_data[scenario] = read_adjustments(scenario)
 
     station_ids = [
-        # '70273526409', # anchorage
-        # 'USC00519534', # honolulu
+        '70273526409', # anchorage
+        'USC00519534', # honolulu
         '72793524234', # seattle
-        # '72466693067', # denver
-        # '72658014922', # minneapolis
-        # '72530094846', # chicago
-        # '72202012839', # miami
-        # '72503394728', # new york
-        # '72278403184', # phoenix
-        # '72219503888', # atlanta
+        '72466693067', # denver
+        '72658014922', # minneapolis
+        '72530094846', # chicago
+        '72202012839', # miami
+        '72503394728', # new york
+        '72278403184', # phoenix
+        '72219503888', # atlanta
         ]
 
     no_adjustments = {k: 0 for k in range(1, 13)}
-    # evaporations = {}
+    all_evaporations = {} # do we need to save all these values?
     monthly_evaporation = {}
+    diffs = {}
 
     for station_id in station_ids:
         monthly_evaporation[station_id] = {}
+        all_evaporations[station_id] = {}
+        diffs[station_id] = {}
+
         temperature_data = read_temperature_file(station_id)
 
-        evaporations, months = calculate_evaporation(
+        all_evaporations[station_id]['base'], months = calculate_evaporation(
             temperature_data, float(latitudes[station_id]), no_adjustments)
 
-        monthly_evaporation[station_id]['base'] = aggregate_evaporations(evaporations, months)
+        monthly_evaporation[station_id]['base'] = aggregate_evaporations(all_evaporations[station_id]['base'], months)
 
         for scenario in scenarios:
-            a_evaporations, a_months = calculate_evaporation(
+            all_evaporations[station_id][scenario], a_months = calculate_evaporation(
                 temperature_data, float(latitudes[station_id]), adjustment_data[scenario][station_id])
 
-            monthly_evaporation[station_id][scenario] = aggregate_evaporations(a_evaporations, months)
+            monthly_evaporation[station_id][scenario] = aggregate_evaporations(all_evaporations[station_id][scenario], months)
+
+            diffs[station_id][scenario] = {}
+
+            for k in monthly_evaporation[station_id]['base'].keys():
+                diffs[station_id][scenario][k] = monthly_evaporation[station_id][scenario][k] - monthly_evaporation[station_id]['base'][k]
+
+
+
 
         # for debugging
-        plot_evap([evaporations, a_evaporations])
+    to_file = ''
+    for station_id in station_ids:
+        for scenario in scenarios:
+            line = f'{station_id},{scenario},'
+            for i in range (1, 13):
+                line += f'{diffs[station_id][scenario][i]:.3f},'
+                # print(diffs[station_id][scenario][i])
+            to_file += f'{line}\n'
+
+    with open(os.path.join('qa', 'evap_change.csv'), 'w') as file:
+        file.write(to_file)
 
 
-    print(monthly_evaporation)
+    monthly_evap_to_file = ''
+    scenario = 'base'
+    for station_id in station_ids:
+        line = f'{station_id},base,'
+        for i in range (1, 13):
+            line += f'{monthly_evaporation[station_id][scenario][i]:.3f},'
+        monthly_evap_to_file += f'{line}\n'
+
+    with open(os.path.join('qa', 'monthly_evap.csv'), 'w') as file:
+        file.write(monthly_evap_to_file)
+
+
+
+        # plot_evap([all_evaporations[station_id]['base'], all_evaporations[station_id][scenarios[0]]])
+
 
         # rounded_evap = {}
         # for key in monthly_evaporation['base'].keys():
