@@ -1,7 +1,7 @@
 # bls_for_swc
 
 1. Register for the BLS API [here](https://data.bls.gov/registrationEngine/)
-2. Clone repository `git clone https://github.com/USEPA/Data-Processing-for-SWC-and-SWMM-CAT'
+2. Clone repository `git clone https://github.com/USEPA/Data-Processing-for-SWC-and-SWMM-CAT`
 3. Change directory to bls
 4. Create src/passwords.py with
 
