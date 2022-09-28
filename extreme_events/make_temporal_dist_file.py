@@ -55,7 +55,7 @@ def write_file(table_dict):
 
     table_ids.insert(0, 'Time')
 
-    with open('temporal_dist_file.txt', 'w') as file:
+    with open('SCS24Hour.txt', 'w') as file:
         file.write('\t'.join(table_ids))
         file.write('\n')
         for each_line in lines:
